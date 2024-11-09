@@ -2,6 +2,7 @@
 import streamlit as st
 from PIL import Image
 import numpy as np
+import requests
 
 # Alap beállítások
 st.title("U-Net alapú kép szegmentáció")
@@ -13,7 +14,12 @@ if uploaded_file is not None:
     image = Image.open(uploaded_file)
     st.image(image, caption="Feltöltött kép", use_column_width=True)
 
-    # Küldd el az API-nak a képet a szegmentáláshoz
+    # Szegmentációs gomb logikája
     if st.button("Szegmentáció futtatása"):
-        # Kép előfeldolgozása és predikciós lekérdezés küldése itt történik
-        pass
+        # Kép elküldése a Colab API-nak
+        # A "http://colab-ip-címe:5000/predict" részt helyettesítsd az ngrok URL-lel, pl.: "http://1234abcd.ngrok.io/predict"
+        response = requests.post("http://colab-ip-címe:5000/predict", files={"image": uploaded_file})
+        
+        if response.status_code == 200:
+            result = np.array(response.json()["result"])
+            st.image(result, caption="Szegmentált kép", use_column_width=True)
