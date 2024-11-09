@@ -7,7 +7,7 @@ import io
 st.title("Image Mask Prediction")
 
 # Upload image
-uploaded_file = st.file_uploader("Choose an image...", type="jpg")
+uploaded_file = st.file_uploader("Choose an image...", type="png")
 
 if uploaded_file is not None:
     # Display uploaded image
