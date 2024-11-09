@@ -1,25 +1,31 @@
-# frontend.py
 import streamlit as st
-from PIL import Image
-import numpy as np
 import requests
+import numpy as np
+import cv2
+from PIL import Image
+import io
 
-# Alap beállítások
-st.title("U-Net alapú kép szegmentáció")
+st.title("Image Mask Prediction")
 
-# Kép feltöltés
-uploaded_file = st.file_uploader("Tölts fel egy képet", type=["jpg", "png", "jpeg"])
+# Upload image
+uploaded_file = st.file_uploader("Choose an image...", type="jpg")
 
 if uploaded_file is not None:
+    # Display uploaded image
     image = Image.open(uploaded_file)
-    st.image(image, caption="Feltöltött kép", use_column_width=True)
-
-    # Szegmentációs gomb logikája
-    if st.button("Szegmentáció futtatása"):
-        # Kép elküldése a Colab API-nak
-        # A "http://colab-ip-címe:5000/predict" részt helyettesítsd az ngrok URL-lel, pl.: "http://1234abcd.ngrok.io/predict"
-        response = requests.post("http://colab-ip-címe:5000/predict", files={"image": uploaded_file})
+    st.image(image, caption="Uploaded Image", use_column_width=True)
+    
+    # Send the image to the API
+    url = "http://YOUR_NGROK_URL/predict"  # Replace with Colab's ngrok URL
+    files = {'image': uploaded_file}
+    response = requests.post(url, files=files)
+    
+    if response.status_code == 200:
+        # Decode mask
+        mask_data = np.array(response.json()['mask'], dtype=np.uint8)
+        mask = cv2.imdecode(mask_data, cv2.IMREAD_COLOR)
         
-        if response.status_code == 200:
-            result = np.array(response.json()["result"])
-            st.image(result, caption="Szegmentált kép", use_column_width=True)
+        # Display mask
+        st.image(mask, caption="Predicted Mask", use_column_width=True)
+    else:
+        st.error("Prediction failed")
