@@ -15,7 +15,7 @@ if uploaded_file is not None:
     st.image(image, caption="Uploaded Image", use_column_width=True)
     
     # Send the image to the API
-    url = "http://YOUR_NGROK_URL/predict"  # Replace with Colab's ngrok URL
+    url = "https://9423-130-211-244-53.ngrok-free.app/predict"  # Replace with Colab's ngrok URL
     files = {'image': uploaded_file}
     response = requests.post(url, files=files)
     
