@@ -14,9 +14,12 @@ if uploaded_file is not None:
     image = Image.open(uploaded_file)
     st.image(image, caption="Uploaded Image", use_column_width=True)
     
+    # Convert the uploaded file to bytes
+    image_bytes = io.BytesIO(uploaded_file.read())
+    
     # Send the image to the API
     url = "https://d233-130-211-244-53.ngrok-free.app/predict"  # Replace with Colab's ngrok URL
-    files = {'image': uploaded_file}
+    files = {'image': image_bytes}
     response = requests.post(url, files=files)
     
     if response.status_code == 200:
